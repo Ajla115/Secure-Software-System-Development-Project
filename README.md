@@ -8,3 +8,5 @@ This project contain implementation of different security protocols in the backe
 - On the root level, you will also find file named config_example.php. You MUST rename this to config_default.php and put it into the gitignore file, if you decide to store your configuration variables here. Otherwise, you would have to change all access points to configuration variables in different parts of the code.
 
 - Additionally, you will have to run a command to install composer on your device.
+
+- Also, for the email function to work properly. Go to services > UserService.php > send_email function. Inside the send_email function change the setFrom to be an actual existing email.
