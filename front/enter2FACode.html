@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Enter Code</title>
+    <!---Custom CSS File--->
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <script src="utils.js"></script>
+    <script src="user-service.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <input type="checkbox" id="check" />
+
+      <div class="otp form">
+        <header>ENTER CODE</header>
+        <form action="#" id="otp-form" method="post">
+          <input type="text" name="otp_code" placeholder="Enter your code" />
+          <input type="submit" class="button" value="Check" />
+          <input type="button" class="button" value="Go to Previous Page" onclick="window.location.href='choose2FAMethod.html';" />
+          
+        </div>
+      </div>
+      <script>
+      $(document).ready(function () {
+        $("#otp-form").validate({
+            focusCleanup: true,
+            errorElement: "em",
+            rules: {
+                otp_code: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 6,
+                },
+            },
+            messages: {
+                otp_code: {
+                    required: "Please enter the OTP code.",
+                    minlength: "The OTP code must be 6 characters long.",
+                    maxlength: "The OTP code must be 6 characters long.",
+                },
+            },
+            submitHandler: function (form) {
+                var formData = $(form).serialize(); // Serialize the form data.
+                var token = localStorage.getItem("user_token");
+                
+                $.ajax({
+                    url: "../api/entertwofactormethodcode",
+                    type: "POST",
+                    data: formData,
+                    headers: {
+                        Authorization: "Bearer " + token, // Include the token in the Authorization header
+                    },
+                    
+                    success: function (response) {
+                        alert("OTP code verified successfully: " + response.message);
+                        localStorage.removeItem("user_token"); // Remove first user_token
+                        localStorage.setItem("user_token2", response.token2);
+                        window.location.href = "home.html";
+                        
+                    },
+                    error: function (jqXHR) {
+                        alert("Failed to verify OTP code: " + jqXHR.responseText);
+                    },
+                });
+            },
+            highlight: function (element) {
+                $(element).fadeOut(function () {
+                    $(element).fadeIn();
+                });
+            },
+        });
+    });
+</script>
+</body>
+</html>
